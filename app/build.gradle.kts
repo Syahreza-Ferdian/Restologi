@@ -17,7 +17,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("String", "MERCHANT_BASE_URL", "\"https://239d-2405-8740-31f1-2015-9806-9b73-4b47-b7ad.ngrok-free.app\"")
+            buildConfigField("String", "CLIENT_KEY", "\"SB-Mid-client-RKkH38UEiRbtBsNF\"")
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -71,4 +80,6 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
     implementation("com.google.firebase:firebase-storage")
     implementation("com.karumi:dexter:6.2.2")
+
+    implementation("com.midtrans:uikit:2.0.0-SANDBOX")
 }
