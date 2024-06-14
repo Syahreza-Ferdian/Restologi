@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Restologi</string>
+    <string name="payment_act_title">Pilih Metode Pembayaran Anda</string>
+    <string name="credit_pay_opt">Pay with Credit Card</string>
+    <string name="gopay_pay_opt">Pay with Gopay</string>
+    <string name="shopeepay_pay_opt">Pay with Shopeepay</string>
+    <string name="bca_pay_opt">Pay with BCA</string>
+    <string name="bri_pay_opt">Pay with BRI</string>
 </resources>
