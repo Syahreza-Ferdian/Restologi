@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "268437593039",
+    "firebase_url": "https://restologi-35155-default-rtdb.firebaseio.com",
+    "project_id": "restologi-35155",
+    "storage_bucket": "restologi-35155.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268437593039:android:6301d319115c8ce71bd0ba",
+        "android_client_info": {
+          "package_name": "com.example.restologi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA69bbyxdrIwjZprOOSut6qrw7oXd76kTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268437593039:android:fe708c57418e22cd1bd0ba",
+        "android_client_info": {
+          "package_name": "com.example.tugasakhir"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA69bbyxdrIwjZprOOSut6qrw7oXd76kTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

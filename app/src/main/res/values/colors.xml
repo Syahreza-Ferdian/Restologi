@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="dark_blue">#2e4058</color>
+    <color name="red">#f75564</color>
+    <color name="yellow">#ffefda</color>
+    <color name="red_2">#C40C0C</color>
+    <color name="grey_light">#f7f8fa</color>
+    <color name="grey">#8F8F8F</color>
+    <color name="higlight_ET">#857EA7ED</color>
+    <color name="blue1">#1791E2</color>
+    <color name="blue2">#24A7FF</color>
+    <color name="blue3">#1E232C</color>
+    <color name="figma">#FEEED9</color>
+    <color name="button">#6E442D</color>
+    <color name="red_3">#FF0000</color>
+    <color name="krem">#F0E9D1</color>
+    <color name="merah_tua">#FF5733</color>
+    <color name="biru_tua">#0077CC</color>
+</resources>
