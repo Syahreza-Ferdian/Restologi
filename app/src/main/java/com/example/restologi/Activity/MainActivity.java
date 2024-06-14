@@ -8,11 +8,13 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import com.example.restologi.Activity.BaseActivity;
+import com.example.restologi.Activity.Cart.CartActivity;
 import com.example.restologi.Adapter.CategoryAdapter;
 import com.example.restologi.Adapter.SliderAdapter;
 import com.example.restologi.Domain.Category;
@@ -79,6 +81,12 @@ public class MainActivity extends BaseActivity {
     }
     private void setVariable() {
         binding.bottomMenu.setItemSelected(R.id.home, true);
+        binding.bottomMenu.setOnItemSelectedListener(i -> {
+            if (i == R.id.cart) {
+                Intent intent = new Intent(MainActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initCategory() {
