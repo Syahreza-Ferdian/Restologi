@@ -49,6 +49,12 @@
             android:exported="false"
             android:label="BaseActivity"
             android:theme="@style/Theme.Restologi" />
+
+        <activity
+            android:name=".Activity.Cart.CartActivity"
+            android:exported="false"
+            android:label="BaseActivity"
+            android:theme="@style/Theme.Restologi" />
     </application>
 
 </manifest>
