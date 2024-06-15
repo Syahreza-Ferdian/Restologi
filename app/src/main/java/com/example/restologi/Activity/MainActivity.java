@@ -13,8 +13,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.restologi.Activity.BaseActivity;
 import com.example.restologi.Activity.Cart.CartActivity;
+import com.example.restologi.Activity.Profile.ProfileActivity;
 import com.example.restologi.Adapter.CategoryAdapter;
 import com.example.restologi.Adapter.SliderAdapter;
 import com.example.restologi.Domain.Category;
@@ -22,15 +27,20 @@ import com.example.restologi.Domain.SliderItems;
 import com.example.restologi.R;
 import com.example.restologi.databinding.ActivityMainBinding;
 import com.google.android.material.slider.Slider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity {
     ActivityMainBinding binding;
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +52,35 @@ public class MainActivity extends BaseActivity {
         initBanner();
         setVariable();
 
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("NAMA_USER");
-        assert username != null;
-        if (!username.isEmpty()) {
-            binding.textView5.setText(username);
-        }
+        mAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        databaseReference.child(user.getUid()).get().addOnSuccessListener(dataSnapshot -> {
+            if (dataSnapshot.exists()) {
+                String profileImageUrl = dataSnapshot.child("profileImageUrl").getValue(String.class);
+                String nama = dataSnapshot.child("name").getValue(String.class);
+
+                assert nama != null;
+                if (!nama.isEmpty()) {
+                    binding.textView5.setText(nama);
+                }
+
+                if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                    Glide.with(this)
+                            .load(profileImageUrl)
+                            .signature(new ObjectKey(System.currentTimeMillis()))
+                            .transform(new CenterCrop(), new RoundedCorners(60))
+                            .into(binding.imageView7);
+                }
+            }
+        });
+
+        binding.imageView7.setOnClickListener(v -> {
+            Intent intent1 = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent1);
+        });
     }
 
     private void initBanner() {
@@ -92,6 +125,10 @@ public class MainActivity extends BaseActivity {
             if (i == R.id.cart) {
                 Intent intent = new Intent(MainActivity.this, CartActivity.class);
                 startActivity(intent);
+            }
+            if (i == R.id.profile) {
+                Intent intent1 = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent1);
             }
         });
     }
