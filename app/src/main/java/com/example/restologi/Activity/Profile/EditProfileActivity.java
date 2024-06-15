@@ -175,10 +175,9 @@ public class EditProfileActivity extends AppCompatActivity {
                             mDatabase.child(user.getUid()).updateChildren(userMap)
                                     .addOnSuccessListener(aVoid -> {
                                         Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
-//                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                        startActivity(intent);
-                                        finish();
+                                        Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
                                     })
                                     .addOnFailureListener(e -> Toast.makeText(this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                         });
@@ -192,10 +191,9 @@ public class EditProfileActivity extends AppCompatActivity {
                 mDatabase.child(user.getUid()).updateChildren(userMap)
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            startActivity(intent);
-                            finish();
+                            Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
                         })
                         .addOnFailureListener(e -> Toast.makeText(this, "Failed to update profile: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
