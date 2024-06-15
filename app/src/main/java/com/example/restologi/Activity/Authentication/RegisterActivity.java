@@ -2,57 +2,84 @@ package com.example.restologi.Activity.Authentication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.restologi.Activity.MainActivity;
+import com.example.restologi.Domain.User;
 import com.example.restologi.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class RegisterActivity extends AppCompatActivity {
-    private EditText et_fullname, et_email, et_phone, et_password;
+    private static final int RC_SIGN_IN = 9002;
+    private EditText et_Email, et_Password;
     private Button btn_register;
+    private ImageView btn_register_google;
+    private TextView tv_login;
     private FirebaseAuth mAuth;
-    private DatabaseReference db;
+    private GoogleSignInClient mGoogleSignInClient;
+    private DatabaseReference mDatabase;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        et_fullname = findViewById(R.id.fullname_input);
-        et_email = findViewById(R.id.email_register);
-        et_phone = findViewById(R.id.phone_input);
-        et_password = findViewById(R.id.password_register);
+        et_Email = findViewById(R.id.email_register);
+        et_Password = findViewById(R.id.password_register);
         btn_register = findViewById(R.id.btn_register);
+        btn_register_google = findViewById(R.id.btn_register_google);
+        tv_login = findViewById(R.id.TVLogin);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
 
         btn_register.setOnClickListener(v -> {
             registerUser();
         });
+
+        btn_register_google.setOnClickListener(v -> {
+            signInWithGoogle();
+        });
+
+        tv_login.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("268437593039-0b67f26hafjpk7hq4r7c3v4277mabjuo.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     private void registerUser() {
-        String name = et_fullname.getText().toString();
-        String email = et_email.getText().toString();
-        String phone = et_phone.getText().toString();
-        String password = et_password.getText().toString();
+        String email = et_Email.getText().toString();
+        String password = et_Password.getText().toString();
 
-        if (name.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -64,17 +91,8 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null) {
-                                user.sendEmailVerification()
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    saveUserData(user, name, phone, email);
-                                                } else {
-                                                    Toast.makeText(RegisterActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
+                                user.sendEmailVerification();
+                                saveUserToDatabase(user);
                             }
                         } else {
                             Toast.makeText(RegisterActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -83,24 +101,58 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void saveUserData(FirebaseUser user, String name, String phone, String email) {
-        String uid = user.getUid();
-        Map<String, Object> userMap = new HashMap<>();
-        userMap.put("name", name);
-        userMap.put("email", email);
-        userMap.put("phone", phone);
-        userMap.put("profileImageUrl", ""); // Initial empty profile image URL
+    private void signInWithGoogle() {
+        mGoogleSignInClient.signOut();
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
 
-        db.child("users").child(uid).setValue(userMap)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Registered successfully. Please check your email for verification.", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Failed to save user data: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                Log.d("R", "signInWithCredential:success");
+                FirebaseUser user = mAuth.getCurrentUser();
+                saveUserToDatabase(user);
+            } else {
+                Log.w("R", "signInWithCredential:failure", task.getException());
+                Toast.makeText(RegisterActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void saveUserToDatabase(FirebaseUser user) {
+        User newUser = new User(user.getUid(), user.getDisplayName(), user.getEmail());
+        mDatabase.child(user.getUid()).setValue(newUser).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(RegisterActivity.this, "Registration successful. Please verify your email.", Toast.LENGTH_SHORT).show();
+                updateUI(user);
+            } else {
+                Log.w("R", "Failed to save user in database.", task.getException());
+                Toast.makeText(RegisterActivity.this, "Failed to save user in database.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                Log.w("R", "Google sign in failed", e);
+            }
+        }
+    }
+
+    public void updateUI(FirebaseUser user) {
+        if (user != null) {
+            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 }

@@ -13,7 +13,20 @@
           "package_name": "com.example.restologi"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "268437593039-ijdtcpus33i4ltt8e5o8382l9ajgaf0s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.restologi",
+            "certificate_hash": "5931ad6a49d66199091280e0d7625bd9f19e829d"
+          }
+        },
+        {
+          "client_id": "268437593039-0b67f26hafjpk7hq4r7c3v4277mabjuo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA69bbyxdrIwjZprOOSut6qrw7oXd76kTM"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "268437593039-0b67f26hafjpk7hq4r7c3v4277mabjuo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -32,7 +50,12 @@
           "package_name": "com.example.tugasakhir"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "268437593039-0b67f26hafjpk7hq4r7c3v4277mabjuo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA69bbyxdrIwjZprOOSut6qrw7oXd76kTM"
@@ -40,7 +63,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "268437593039-0b67f26hafjpk7hq4r7c3v4277mabjuo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
