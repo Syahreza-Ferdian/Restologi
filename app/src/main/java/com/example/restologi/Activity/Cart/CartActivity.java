@@ -7,9 +7,9 @@ import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.restologi.Activity.BaseActivity;
-import com.example.restologi.Activity.Food.DetailFood;
 import com.example.restologi.Activity.MainActivity;
 import com.example.restologi.Adapter.CartAdapter;
+import com.example.restologi.Handler.CurrencyFormatter;
 import com.example.restologi.Handler.ManagmentCart;
 import com.example.restologi.Handler.ChangeNumberItemsListener;
 import com.example.restologi.databinding.ActivityCartBinding;
@@ -17,6 +17,8 @@ import com.example.restologi.databinding.ActivityCartBinding;
 public class CartActivity extends BaseActivity {
     ActivityCartBinding binding;
     private ManagmentCart managmentCart;
+
+    private double tax, totalFee, total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,10 @@ public class CartActivity extends BaseActivity {
         setVariable();
         calculateCart();
         initCartList();
+
+//        binding.checkOutBtn.setOnClickListener(v -> {
+//            double
+//        });
     }
 
     private void initCartList() {
@@ -49,16 +55,24 @@ public class CartActivity extends BaseActivity {
     }
 
     private void calculateCart() {
-        double percentTax = 0.02;
-        double delivery = 10_000; // 10000 rupiah
-        double tax = (double) Math.round(managmentCart.getTotalFee() * percentTax * 100.0) / 100;
-        double total = Math.round((managmentCart.getTotalFee() + tax + delivery)) * 100;
-        double itemTotal = (double) Math.round(managmentCart.getTotalFee() * 100) / 100;
+//        double percentTax = 0.02;
+//        double delivery = 10_000; // 10000 rupiah
+//        double tax = (double) Math.round(managmentCart.getTotalFee() * percentTax * 100.0) / 100;
+//        double total = Math.round((managmentCart.getTotalFee() + tax + delivery)) * 100;
+//        double itemTotal = (double) Math.round(managmentCart.getTotalFee() * 100) / 100;
 
-        binding.totalFeeTxt.setText("Rp" + itemTotal);
-        binding.taxTxt.setText("Rp" + tax);
-        binding.deliveryTxt.setText("Rp" + delivery);
-        binding.totalTxt.setText("Rp" + total);
+        double percentTax = 0.11; // 11% PPN
+        double delivery = 10_000; // 10000 rupiah
+
+        this.totalFee = managmentCart.getTotalFee();
+        this.tax = Math.round(totalFee * percentTax * 100.0) / 100.0;
+//        double itemTotal = Math.round(totalFee * 100.0) / 100.0;
+        this.total = totalFee + tax + delivery;
+
+        binding.totalFeeTxt.setText(CurrencyFormatter.formatCurrency(this.totalFee));
+        binding.taxTxt.setText(CurrencyFormatter.formatCurrency(this.tax));
+        binding.deliveryTxt.setText(CurrencyFormatter.formatCurrency(delivery));
+        binding.totalTxt.setText(CurrencyFormatter.formatCurrency(this.total));
     }
 
     private void setVariable() {
@@ -68,5 +82,17 @@ public class CartActivity extends BaseActivity {
                 startActivity(new Intent(CartActivity.this, MainActivity.class));
             }
         });
+    }
+
+    public double getTax() {
+        return tax;
+    }
+
+    public double getTotalFee() {
+        return totalFee;
+    }
+
+    public double getTotal() {
+        return total;
     }
 }
