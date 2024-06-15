@@ -1,9 +1,13 @@
 package com.example.restologi.Handler;
 
 import android.content.Context;
+import android.content.Intent;
 import android.widget.Toast;
 
+import com.example.restologi.Activity.Cart.CartActivity;
+import com.example.restologi.Activity.MainActivity;
 import com.example.restologi.BuildConfig;
+import com.example.restologi.Domain.Foods;
 import com.example.restologi.Domain.TransactionModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -41,12 +45,20 @@ public class PaymentHandler implements TransactionFinishedCallback {
                 .buildSDK();
     }
 
-    public TransactionRequest transactionRequest(String id, double price, int qty, String itemName, String firstName, String lastName, String email, String phone) {
-        TransactionRequest request = new TransactionRequest(UUID.randomUUID().toString(), price * qty);
-        ItemDetails details = new ItemDetails(id, price, qty, itemName);
-
+    public TransactionRequest transactionRequest(ArrayList<Foods> foods, double delivery, double tax, String firstName, String lastName, String email, String phone) {
+        double totalPrice = 0;
         ArrayList<ItemDetails> itemDetails = new ArrayList<>();
-        itemDetails.add(details);
+
+        for (Foods food : foods) {
+            totalPrice += food.getPrice();
+
+            itemDetails.add(new ItemDetails(String.valueOf(food.getId()), food.getPrice(), food.getNumberInCart(), food.getTitle()));
+        }
+
+        itemDetails.add(new ItemDetails("D-01", delivery, 1, "Ongkos Kirim"));
+        itemDetails.add(new ItemDetails("T-01", tax, 1, "Pajak"));
+
+        TransactionRequest request = new TransactionRequest(UUID.randomUUID().toString(), totalPrice + delivery + tax);
         request.setItemDetails(itemDetails);
 
         CreditCard creditCard = new CreditCard();
@@ -75,8 +87,8 @@ public class PaymentHandler implements TransactionFinishedCallback {
         myRef.child(transactionId).setValue(newTransaction);
     }
 
-    public void clickPay(PaymentMethod paymentMethod,String productID, double productPrice, int qty, String productName, String firstName, String lastName, String email, String phone) {
-        TransactionRequest transactionRequest = transactionRequest(productID, productPrice, qty, productName, firstName, lastName, email, phone);
+    public void clickPay(PaymentMethod paymentMethod,ArrayList<Foods> foods, double deliveryFee, double tax, String firstName, String lastName, String email, String phone) {
+        TransactionRequest transactionRequest = transactionRequest(foods, deliveryFee, tax, firstName, lastName, email, phone);
 
         this.currentTransactionAmount = String.valueOf(transactionRequest.getAmount());
 
@@ -96,6 +108,14 @@ public class PaymentHandler implements TransactionFinishedCallback {
                     this.saveTransactionToFirebase(transaction_id, amount, paymentMethod);
 
                     Toast.makeText(this.context, "Transaction Sukses " + transactionResult.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();
+
+                    ManagmentCart managmentCart = new ManagmentCart(context);
+                    managmentCart.removeAll();
+
+                    Intent intent = new Intent(this.context, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    this.context.startActivity(intent);
+
                     break;
                 case TransactionResult.STATUS_PENDING:
                     Toast.makeText(this.context, "Transaction Pending " + transactionResult.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();

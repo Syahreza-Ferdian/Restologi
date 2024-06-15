@@ -1,5 +1,6 @@
 package com.example.restologi.Activity.Payment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,9 +10,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.restologi.Domain.Foods;
 import com.example.restologi.Handler.PaymentHandler;
 import com.example.restologi.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.midtrans.sdk.corekit.core.PaymentMethod;
+
+import java.util.ArrayList;
 
 public class PaymentActivity extends AppCompatActivity {
     private RadioButton gopay_radio_btn;
@@ -25,6 +31,7 @@ public class PaymentActivity extends AppCompatActivity {
     private LinearLayout bca_card;
     private LinearLayout bri_card;
     private Button btn_continue;
+    private FirebaseAuth mAuth;
 
     private PaymentMethod selected_payment_method;
 
@@ -50,12 +57,24 @@ public class PaymentActivity extends AppCompatActivity {
 
         btn_continue = findViewById(R.id.btn_continue);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+
         btn_continue.setOnClickListener(v -> {
             if (selected_payment_method == null) {
                 Toast.makeText(this, "Pilih salah satu metode pembayaran!", Toast.LENGTH_LONG).show();
                 return;
             }
-            paymentHandler.clickPay(selected_payment_method, "10", 15000, 1, "Ayam", "Syahreza", "Ferdian", "syahrezaferdian@gmail.com", "0895414949161");
+
+            Intent intent = getIntent();
+            ArrayList<Foods> foods = (ArrayList<Foods>) intent.getSerializableExtra("CART_ORDER");
+            double tax = intent.getDoubleExtra("TAX", 0);
+            double delivery = intent.getDoubleExtra("DELIVERY", 0);
+
+            if (!foods.isEmpty() && user != null) {
+                paymentHandler.clickPay(selected_payment_method, foods, delivery, tax, user.getDisplayName(), "", user.getEmail(), user.getPhoneNumber());
+            }
         });
 
         View.OnClickListener cc_on_click_listener = v -> {
