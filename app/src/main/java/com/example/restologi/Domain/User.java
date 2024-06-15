@@ -5,6 +5,7 @@ public class User {
     public String name;
     public String email;
     public String phoneNumber;
+    public String address;
 
     public User() {
     }
@@ -21,5 +22,13 @@ public class User {
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    public User(String uid, String name, String email, String phoneNumber, String address) {
+        this.uid = uid;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
     }
 }
