@@ -9,8 +9,9 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-<!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
-<!--    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 <!--    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />-->
 
     <application
@@ -78,6 +79,24 @@
 
         <activity
             android:name=".Activity.Authentication.RegisterActivity"
+            android:exported="false"
+            android:label="BaseActivity"
+            android:theme="@style/Theme.Restologi" />
+
+        <activity
+            android:name=".Activity.Profile.ProfileActivity"
+            android:exported="false"
+            android:label="BaseActivity"
+            android:theme="@style/Theme.Restologi" />
+
+        <activity
+            android:name=".Activity.Profile.EditProfileActivity"
+            android:exported="false"
+            android:label="BaseActivity"
+            android:theme="@style/Theme.Restologi" />
+
+        <activity
+            android:name=".Activity.Food.FoodImageDownloadActivity"
             android:exported="false"
             android:label="BaseActivity"
             android:theme="@style/Theme.Restologi" />
