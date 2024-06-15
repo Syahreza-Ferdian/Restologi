@@ -25,7 +25,7 @@
         android:theme="@style/Theme.Restologi"
         tools:targetApi="tiramisu">
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".Activity.IntroActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,6 +60,24 @@
 
         <activity
             android:name=".Activity.Payment.PaymentActivity"
+            android:exported="false"
+            android:label="BaseActivity"
+            android:theme="@style/Theme.Restologi" />
+
+        <activity
+            android:name=".Activity.MainActivity"
+            android:exported="false"
+            android:label="BaseActivity"
+            android:theme="@style/Theme.Restologi" />
+
+        <activity
+            android:name=".Activity.Authentication.LoginActivity"
+            android:exported="false"
+            android:label="BaseActivity"
+            android:theme="@style/Theme.Restologi" />
+
+        <activity
+            android:name=".Activity.Authentication.RegisterActivity"
             android:exported="false"
             android:label="BaseActivity"
             android:theme="@style/Theme.Restologi" />
