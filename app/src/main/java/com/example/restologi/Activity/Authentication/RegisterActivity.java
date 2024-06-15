@@ -32,7 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9002;
-    private EditText et_Email, et_Password;
+    private EditText et_Email, et_Password, et_nama, et_phone;
     private Button btn_register;
     private ImageView btn_register_google;
     private TextView tv_login;
@@ -47,6 +47,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         et_Email = findViewById(R.id.email_register);
         et_Password = findViewById(R.id.password_register);
+        et_nama = findViewById(R.id.fullname_input);
+        et_phone = findViewById(R.id.phone_input);
         btn_register = findViewById(R.id.btn_register);
         btn_register_google = findViewById(R.id.btn_register_google);
         tv_login = findViewById(R.id.TVLogin);
@@ -122,11 +124,18 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void saveUserToDatabase(FirebaseUser user) {
-        User newUser = new User(user.getUid(), user.getDisplayName(), user.getEmail());
+        User newUser;
+        if (et_phone.getText().toString().equals("")) {
+            newUser = new User(user.getUid(), et_nama.getText().toString(), user.getEmail());
+        } else {
+            newUser = new User(user.getUid(), et_nama.getText().toString(), user.getEmail(), et_phone.getText().toString());
+        }
+
         mDatabase.child(user.getUid()).setValue(newUser).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(RegisterActivity.this, "Registration successful. Please verify your email.", Toast.LENGTH_SHORT).show();
-                updateUI(user);
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
             } else {
                 Log.w("R", "Failed to save user in database.", task.getException());
                 Toast.makeText(RegisterActivity.this, "Failed to save user in database.", Toast.LENGTH_SHORT).show();
@@ -152,6 +161,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void updateUI(FirebaseUser user) {
         if (user != null) {
             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+            intent.putExtra("NAMA_USER", user.getDisplayName());
             startActivity(intent);
         }
     }
