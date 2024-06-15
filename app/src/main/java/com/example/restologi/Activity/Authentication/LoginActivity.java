@@ -185,6 +185,7 @@ public class LoginActivity extends AppCompatActivity {
     public void updateUI(FirebaseUser user) {
         if (user != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("NAMA_USER", user.getDisplayName());
             startActivity(intent);
         } else {
             Toast.makeText(LoginActivity.this, "Log In First", Toast.LENGTH_SHORT).show();

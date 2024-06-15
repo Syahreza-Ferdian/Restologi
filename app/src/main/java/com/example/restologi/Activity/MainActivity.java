@@ -41,6 +41,13 @@ public class MainActivity extends BaseActivity {
         initCategory();
         initBanner();
         setVariable();
+
+        Intent intent = getIntent();
+        String username = intent.getStringExtra("NAMA_USER");
+        assert username != null;
+        if (!username.isEmpty()) {
+            binding.textView5.setText(username);
+        }
     }
 
     private void initBanner() {
