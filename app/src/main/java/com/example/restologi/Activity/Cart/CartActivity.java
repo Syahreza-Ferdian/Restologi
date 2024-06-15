@@ -8,17 +8,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.restologi.Activity.BaseActivity;
 import com.example.restologi.Activity.MainActivity;
+import com.example.restologi.Activity.Payment.PaymentActivity;
 import com.example.restologi.Adapter.CartAdapter;
+import com.example.restologi.Domain.Foods;
 import com.example.restologi.Handler.CurrencyFormatter;
 import com.example.restologi.Handler.ManagmentCart;
 import com.example.restologi.Handler.ChangeNumberItemsListener;
 import com.example.restologi.databinding.ActivityCartBinding;
 
+import java.util.ArrayList;
+
 public class CartActivity extends BaseActivity {
     ActivityCartBinding binding;
     private ManagmentCart managmentCart;
 
-    private double tax, totalFee, total;
+    private double tax, totalFee, total, delivery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +36,16 @@ public class CartActivity extends BaseActivity {
         calculateCart();
         initCartList();
 
-//        binding.checkOutBtn.setOnClickListener(v -> {
-//            double
-//        });
+        binding.checkOutBtn.setOnClickListener(v -> {
+            ArrayList<Foods> foodsOrder = new ArrayList<>();
+            foodsOrder = managmentCart.getListCart();
+
+            Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
+            intent.putExtra("CART_ORDER", foodsOrder);
+            intent.putExtra("TAX", tax);
+            intent.putExtra("DELIVERY", delivery);
+            startActivity(intent);
+        });
     }
 
     private void initCartList() {
@@ -62,7 +73,7 @@ public class CartActivity extends BaseActivity {
 //        double itemTotal = (double) Math.round(managmentCart.getTotalFee() * 100) / 100;
 
         double percentTax = 0.11; // 11% PPN
-        double delivery = 10_000; // 10000 rupiah
+        delivery = 10_000; // 10000 rupiah
 
         this.totalFee = managmentCart.getTotalFee();
         this.tax = Math.round(totalFee * percentTax * 100.0) / 100.0;
