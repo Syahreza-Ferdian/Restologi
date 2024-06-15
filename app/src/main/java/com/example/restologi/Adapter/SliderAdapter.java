@@ -13,8 +13,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.example.restologi.Domain.SliderItems;
+import com.example.restologi.Handler.GlideApp;
 import com.example.restologi.R;
 
 import java.util.List;
@@ -23,13 +24,6 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     private List<SliderItems> sliderItems;
     private ViewPager2 viewPager2;
     private Context context;
-    private Runnable runnable=new Runnable() {
-        @Override
-        public void run() {
-            sliderItems.addAll(sliderItems);
-            notifyDataSetChanged();
-        }
-    };
 
     public SliderAdapter(List<SliderItems> sliderItems, ViewPager2 viewPager2) {
         this.sliderItems = sliderItems;
@@ -39,34 +33,29 @@ public class SliderAdapter extends RecyclerView.Adapter<SliderAdapter.SliderView
     @NonNull
     @Override
     public SliderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context=parent.getContext();
-        return new SliderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.slider_viewholder,parent,false));
+        context = parent.getContext();
+        return new SliderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.slider_viewholder, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull SliderViewHolder holder, int position) {
-        RequestOptions requestOptions=new RequestOptions();
-        requestOptions=requestOptions.transform(new CenterCrop(),new RoundedCorners(60));
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(sliderItems.get(position).getImage())
-                .apply(requestOptions)
+                .transform(new CenterCrop(), new RoundedCorners(60))
+                .signature(new ObjectKey(System.currentTimeMillis()))
                 .into(holder.imageView);
-
-        if (position==sliderItems.size()-2) {
-            viewPager2.post(runnable);
-        }
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return sliderItems.size();
     }
 
     public class SliderViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         public SliderViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView=itemView.findViewById(R.id.imageSlide);
+            imageView = itemView.findViewById(R.id.imageSlide);
         }
     }
 }
