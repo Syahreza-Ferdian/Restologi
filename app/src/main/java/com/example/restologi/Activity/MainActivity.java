@@ -84,37 +84,50 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initBanner() {
-        DatabaseReference myRef = database.getReference("Banners");
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Banners");
         binding.progressBarBanner.setVisibility(View.VISIBLE);
         ArrayList<SliderItems> items = new ArrayList<>();
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    for (DataSnapshot issue:snapshot.getChildren()) {
-                        items.add(issue.getValue(SliderItems.class));
+                    for (DataSnapshot issue : snapshot.getChildren()) {
+                        SliderItems sliderItem = issue.getValue(SliderItems.class);
+                        if (sliderItem != null) {
+                            items.add(sliderItem);
+                            Log.d("BANNER_ITEM", "Image URL: " + sliderItem.getImage());
+                        } else {
+                            Log.e("BANNER_ITEM", "SliderItem is null");
+                        }
                     }
-                    Log.println(Log.ASSERT, "LOG", items.get(0).getImage());
-                    banner(items);
+                    if (!items.isEmpty()) {
+                        banner(items);
+                    } else {
+                        Log.e("BANNER_ITEM", "No items found");
+                    }
                     binding.progressBarBanner.setVisibility(View.GONE);
+                } else {
+                    Log.e("BANNER_ITEM", "No snapshot exists");
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.e("BANNER_ITEM", "DatabaseError: " + error.getMessage());
             }
         });
     }
 
+
     private void banner(ArrayList<SliderItems> items) {
-        binding.viewpager2.setAdapter(new SliderAdapter(items,binding.viewpager2));
+        SliderAdapter sliderAdapter = new SliderAdapter(items, binding.viewpager2);
+        binding.viewpager2.setAdapter(sliderAdapter);
         binding.viewpager2.setClipChildren(false);
         binding.viewpager2.setClipToPadding(false);
         binding.viewpager2.setOffscreenPageLimit(3);
         binding.viewpager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
 
-        CompositePageTransformer compositePageTransformer=new CompositePageTransformer();
+        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
         compositePageTransformer.addTransformer(new MarginPageTransformer(40));
 
         binding.viewpager2.setPageTransformer(compositePageTransformer);
