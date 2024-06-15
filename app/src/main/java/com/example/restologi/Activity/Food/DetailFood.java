@@ -4,6 +4,7 @@ import static android.content.Intent.getIntent;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.RoundedCorner;
 import android.view.View;
@@ -33,6 +34,12 @@ public class DetailFood extends BaseActivity {
 
         getIntentExtra();
         setVariable();
+
+        binding.pic.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailFood.this, FoodImageDownloadActivity.class);
+            intent.putExtra("IMAGE_LINK", object.getImagePath());
+            startActivity(intent);
+        });
     }
 
     private void setVariable() {
